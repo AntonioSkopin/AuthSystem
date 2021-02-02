@@ -1,19 +1,30 @@
-﻿using AuthSystem.Models;
+﻿using AuthSystem.Entities;
+using AuthSystem.Models;
 using AuthSystem.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace AuthSystem.Controllers
 {
     public class AuthController : Controller
     {
         public IAuthorizationService _authService;
+        private IMapper _mapper;
 
-        public AuthController(IAuthorizationService authService)
+        public AuthController(IAuthorizationService authService, IMapper mapper)
         {
             _authService = authService;
+            _mapper = mapper;
         }
         
-        public IActionResult Index()
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult Register()
         {
             return View();
         }
@@ -29,6 +40,25 @@ namespace AuthSystem.Controllers
                 return null;
             }
             return user.Username;
+        }
+
+        [HttpPost]
+        public async Task<User> RegisterUser(RegisterModel model)
+        {
+            // Map model to entity
+            var user = _mapper.Map<User>(model);
+
+            try
+            {
+                // Create user
+                await _authService.Register(user, model.Password);
+                return user;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
     }
 }

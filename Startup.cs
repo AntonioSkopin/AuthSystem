@@ -1,10 +1,12 @@
 using AuthSystem.Helpers;
 using AuthSystem.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace AuthSystem
 {
@@ -22,6 +24,7 @@ namespace AuthSystem
         {
             services.AddDbContext<DataContext>();
             services.AddControllersWithViews();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IAuthorizationService, AuthService>();
         }
 

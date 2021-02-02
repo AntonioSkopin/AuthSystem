@@ -1,0 +1,61 @@
+﻿@model AuthenticateModel
+
+@{
+    ViewData["Title"] = "Registreer";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<div>
+    <h1 class="display-4">Maak een gratis account!</h1>
+    <form id="form" method="post" autocomplete="off">
+        <div class="form-group">
+            <label for="firstnameInput">Firstname:</label>
+            <input class="form-control" type="text" id="firstname" />
+        </div>
+        <div class="form-group">
+            <label for="usernameInput">Lastname:</label>
+            <input class="form-control" type="text" id="lastname" />
+        </div>
+        <div class="form-group">
+            <label for="usernameInput">Email:</label>
+            <input class="form-control" type="email" id="email" />
+        </div>
+        <div class="form-group">
+            <label for="usernameInput">Username:</label>
+            <input class="form-control" type="text" id="username" />
+        </div>
+        <div class="form-group">
+            <label for="passwordInput">Password</label>
+            <input class="form-control" type="password" id="password" />
+            <small id="passwordHelp" class="form-text text-muted">Ik zal je wachtwoord nooit ergens opslaan.</small>
+        </div>
+        <button id="reg-btn" type="button" class="btn btn-primary">Registreer</button>
+    </form>
+    <br />
+    <div id="registerResult" class=""></div>
+
+    <script type="text/jscript">
+        $("#reg-btn").click(function () {
+            var url = "https://localhost:44306/Auth/RegisterUser";
+            var firstnameInpt = $("#firstname").val();
+            var lastnameInpt = $("#lastname").val();
+            var emailInpt = $("#email").val();
+            var usernameInpt = $("#username").val();
+            var passwordInpt = $("#password").val();
+            $.post(url, { firstname: firstnameInpt, lastname: lastnameInpt, email: emailInpt, username: usernameInpt, password: passwordInpt }, function (data) {
+                if (data == null) {
+                    $("#registerResult").removeClass("alert alert-success");
+                    $("#registerResult").addClass("alert alert-danger");
+                    $("#registerResult").html("Iets is fout gegaan! Probeer het opnieuw!");
+                } else {
+                    $("#registerResult").removeClass("alert alert-danger");
+                    $("#registerResult").addClass("alert alert-success");
+                    $("#registerResult").html("Bedankt voor het maken van je account " + data.firstname + "!");
+                }
+            });
+        });
+    </script>
+</div>
