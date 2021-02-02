@@ -3,12 +3,14 @@ using AuthSystem.Helpers;
 using AuthSystem.Models;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AuthSystem.Services
 {
     public interface IAuthorizationService
     {
         User Authenticate(AuthenticateModel authenticateModel);
+        Task<User> Register(User user, string password);
     }
 
     public class AuthService : IAuthorizationService
@@ -36,6 +38,28 @@ namespace AuthSystem.Services
                 return null;
 
             // Authentication successful
+            return user;
+        }
+
+        public async Task<User> Register(User user, string password)
+        {
+            // Validation
+            if (string.IsNullOrWhiteSpace(password))
+                Console.WriteLine("Please enter a password.");
+
+            if (_context.Users.Any(usr => usr.Username == user.Username))
+                Console.WriteLine("Username is already taken");
+
+            // Get the password hash
+            byte[] passwordHash, passwordSalt;
+            CreatePasswordHash(password, out passwordHash, out passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
             return user;
         }
 
