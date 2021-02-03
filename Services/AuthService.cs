@@ -52,10 +52,14 @@ namespace AuthSystem.Services
             if (_context.Users.Any(usr => usr.Username == user.Username))
                 Console.WriteLine("Username is already taken");
 
+            if (_context.Users.Any(usr => usr.Email == user.Email))
+                Console.WriteLine("Email is already taken");
+
             // Get the password hash
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
+            // Generate pin code and send email to registered user
             string pinCode = GeneratePin();
             SendRegisterConfirmationMail(user.Email, pinCode);
 
