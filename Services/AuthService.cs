@@ -3,6 +3,7 @@ using AuthSystem.Helpers;
 using AuthSystem.Models;
 using System;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace AuthSystem.Services
@@ -11,6 +12,7 @@ namespace AuthSystem.Services
     {
         User Authenticate(AuthenticateModel authenticateModel);
         Task<User> Register(User user, string password);
+        Task<bool> ActivateAccount(string pincode);
     }
 
     public class AuthService : IAuthorizationService
@@ -54,13 +56,39 @@ namespace AuthSystem.Services
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
+            string pinCode = GeneratePin();
+            SendRegisterConfirmationMail(user.Email, pinCode);
+
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            user.IsActivated = false;
+            user.ActivationPin = pinCode;
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
             return user;
+        }
+
+        public async Task<bool> ActivateAccount(string pincode)
+        {
+            // Searches for a user with the pincode
+            var user = _context.Users.Where(usr => usr.ActivationPin == pincode).FirstOrDefault();
+
+            if (user == null)
+            {
+                Console.WriteLine("Invalid PIN is entered!");
+                return false;
+            }
+
+            // Activate the account
+            user.IsActivated = true;
+            // Set the Activation pin to null because we don't need it anymore
+            user.ActivationPin = null;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         // Private helper methods
@@ -105,6 +133,40 @@ namespace AuthSystem.Services
             }
 
             return true;
+        }
+
+        private static void SendRegisterConfirmationMail(string userMail, string pincode)
+        {
+            string toPerson = userMail;
+            string from = "antoniosko15@gmail.com";
+
+            MailMessage message = new MailMessage(from, toPerson);
+            message.Subject = "Please verify your account!";
+            message.IsBodyHtml = true;
+            message.Body = "<h3>Your unique PIN code to activate your account: " + pincode + ".</h3><p>Activate your account by clicking on this <a href='https://localhost:44306/Auth/VerifyAccount'>link</a>!</p>";
+
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            client.Credentials = new System.Net.NetworkCredential()
+            {
+                UserName = "antoniosko15@gmail.com",
+                Password = "CENSORED"
+            };
+            try
+            {
+                client.EnableSsl = true;
+                client.Send(message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught in SendRegisterConfirmationMail: {0}", ex.ToString());
+            }
+        }
+
+        // Generates a 4 digit PIN code
+        private static string GeneratePin()
+        {
+            Random random = new Random();
+            return random.Next(0, 9999).ToString("D4");
         }
     }
 }

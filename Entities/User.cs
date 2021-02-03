@@ -19,5 +19,9 @@ namespace AuthSystem.Entities
         public byte[] PasswordHash { get; set; }
 
         public byte[] PasswordSalt { get; set; }
+
+        public bool IsActivated { get; set; }
+
+        public string ActivationPin { get; set; }
     }
 }

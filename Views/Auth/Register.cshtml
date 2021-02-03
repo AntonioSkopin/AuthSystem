@@ -40,6 +40,7 @@
     <script type="text/jscript">
         $("#reg-btn").click(function () {
             var url = "https://localhost:44306/Auth/RegisterUser";
+            // Get form input values:
             var firstnameInpt = $("#firstname").val();
             var lastnameInpt = $("#lastname").val();
             var emailInpt = $("#email").val();
@@ -53,7 +54,7 @@
                 } else {
                     $("#registerResult").removeClass("alert alert-danger");
                     $("#registerResult").addClass("alert alert-success");
-                    $("#registerResult").html("Bedankt voor het maken van je account " + data.firstname + "!");
+                    $("#registerResult").html("Bedankt voor het maken van je account " + data.firstname + "! Ga naar je email om je account te activeren.");
                 }
             });
         });

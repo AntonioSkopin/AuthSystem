@@ -152,3 +152,4 @@ C:\Users\askop\OneDrive\Desktop\AuthSystem\bin\Debug\netcoreapp3.1\runtimes\win\
 C:\Users\askop\OneDrive\Desktop\AuthSystem\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\askop\OneDrive\Desktop\AuthSystem\obj\Debug\netcoreapp3.1\Razor\Views\Auth\Register.cshtml.g.cs
 C:\Users\askop\OneDrive\Desktop\AuthSystem\obj\Debug\netcoreapp3.1\Razor\Views\Auth\Login.cshtml.g.cs
+C:\Users\askop\OneDrive\Desktop\AuthSystem\obj\Debug\netcoreapp3.1\Razor\Views\Auth\VerifyAccount.cshtml.g.cs

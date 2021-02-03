@@ -1,0 +1,38 @@
+﻿@model AuthenticateModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<div>
+    <h1 class="display-4">Activate your account now!</h1>
+    <div class="form-group">
+        <label for="codeInput">Verify code:</label>
+        <input class="form-control" type="text" id="codeInput" />
+    </div>
+    <button id="activate-btn" class="btn btn-primary">Activate</button>
+    <br /><br />
+    <div id="activateResult" class=""></div>
+
+    <script type="text/jscript">
+        $("#activate-btn").click(function () {
+            var url = "https://localhost:44306/Auth/ActivateAccount";
+            const pincodeInput = $("#codeInput").val();
+            $.post(url, { pincode: pincodeInput }, function (data) {
+                if (data == null) {
+                    $("#activateResult").removeClass("alert alert-success");
+                    $("#activateResult").addClass("alert alert-danger");
+                    $("#activateResult").html("Onjuiste pincode! Probeer het opnieuw!");
+                } else {
+                    $("#activateResult").removeClass("alert alert-danger");
+                    $("#activateResult").addClass("alert alert-success");
+                    $("#activateResult").html("Account is geactiveerd! Je kunt nu <a href='https://localhost:44306/Auth/Login'>inloggen</a>");
+                }
+            });
+        });
+    </script>
+</div>
