@@ -35,9 +35,9 @@ namespace AuthSystem.Controllers
         }
 
         [HttpPost]
-        public string Authenticate(AuthenticateModel model)
+        public async Task<string> Authenticate(AuthenticateModel model)
         {
-            var user = _authService.Authenticate(model);
+            var user = await _authService.Authenticate(model);
 
             // User = null when invalid input info is provided
             if (user == null)

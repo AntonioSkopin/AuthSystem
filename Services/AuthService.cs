@@ -1,7 +1,9 @@
 ﻿using AuthSystem.Entities;
 using AuthSystem.Helpers;
 using AuthSystem.Models;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -10,26 +12,38 @@ namespace AuthSystem.Services
 {
     public interface IAuthorizationService
     {
-        User Authenticate(AuthenticateModel authenticateModel);
+        Task<User> Authenticate(AuthenticateModel authenticateModel);
         Task<User> Register(User user, string password);
         Task<bool> ActivateAccount(string pincode);
     }
 
-    public class AuthService : IAuthorizationService
+    public class AuthService : SqlService, IAuthorizationService
     {
         private DataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(DataContext context)
+        public AuthService(IConfiguration configuration, DataContext context) : base(configuration)
         {
+            _configuration = configuration;
             _context = context;
         }
 
-        public User Authenticate(AuthenticateModel authenticateModel)
+        public async Task<User> Authenticate(AuthenticateModel authenticateModel)
         {
             if (string.IsNullOrEmpty(authenticateModel.Username) || string.IsNullOrEmpty(authenticateModel.Password))
                 Console.WriteLine("Please enter your username and password!");
 
-            var user = _context.Users.SingleOrDefault(usr => usr.Username == authenticateModel.Username);
+            // Query to get the user
+            var getUserQuery =
+            @"
+                SELECT * FROM Users
+                WHERE Username = @_username
+            ";
+
+            var user = await GetQuery<User>(getUserQuery, new
+            {
+                _username = authenticateModel.Username
+            });
 
             // Check if username exists
             if (user == null)
@@ -49,10 +63,20 @@ namespace AuthSystem.Services
             if (string.IsNullOrWhiteSpace(password))
                 Console.WriteLine("Please enter a password.");
 
-            if (_context.Users.Any(usr => usr.Username == user.Username))
+            // Query to get the user
+            var listOfUsersQuery =
+            @"
+                SELECT * FROM Users
+            ";
+
+            // Execute and store response
+            List<User> listUsers = await GetManyQuery<User>(listOfUsersQuery);
+
+            // Validation:
+            if (listOfUsersQuery.Contains(user.Username))
                 Console.WriteLine("Username is already taken");
 
-            if (_context.Users.Any(usr => usr.Email == user.Email))
+            if (listOfUsersQuery.Contains(user.Email))
                 Console.WriteLine("Email is already taken");
 
             // Get the password hash
@@ -63,21 +87,45 @@ namespace AuthSystem.Services
             string pinCode = GeneratePin();
             SendRegisterConfirmationMail(user.Email, pinCode);
 
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
-            user.IsActivated = false;
-            user.ActivationPin = pinCode;
+            user.Gd = Guid.NewGuid();
 
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
+            var insertUserQuery =
+            @"
+                  INSERT INTO Users
+                  VALUES(@_gd, @_firstname, @_lastname, @_username, @_email, @_hash, @_salt, @_isActivated, @_pin)
+            ";
+
+            // Execute query
+            await PostQuery(insertUserQuery, new
+            {
+                _gd = user.Gd,
+                _firstname = user.Firstname,
+                _lastname = user.Lastname,
+                _username = user.Username,
+                _email = user.Email,
+                _hash = passwordHash,
+                _salt = passwordSalt,
+                _isActivated = false,
+                _pin = pinCode
+            });
 
             return user;
         }
 
         public async Task<bool> ActivateAccount(string pincode)
         {
-            // Searches for a user with the pincode
-            var user = _context.Users.Where(usr => usr.ActivationPin == pincode).FirstOrDefault();
+            // Query to search for a user with the pincode
+            var getUserQuery =
+            @"
+                SELECT * FROM Users
+                WHERE ActivationPin = @_pin
+            ";
+
+            // Get result of query
+            var user = await GetQuery<User>(getUserQuery, new
+            {
+                _pin = pincode
+            });
 
             if (user == null)
             {
@@ -87,10 +135,19 @@ namespace AuthSystem.Services
 
             // Activate the account
             user.IsActivated = true;
+
             // Set the Activation pin to null because we don't need it anymore
-            user.ActivationPin = null;
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            var updateIsActivatedQuery =
+            @"
+                UPDATE Users
+                SET IsActivated = 1, ActivationPin = null
+                WHERE ActivationPin = @_pin
+            ";
+
+            await PutQuery(updateIsActivatedQuery, new
+            {
+                _pin = pincode
+            });
 
             return true;
         }
