@@ -29,6 +29,11 @@ namespace AuthSystem.Controllers
             return View();
         }
 
+        public IActionResult VerifyAccount()
+        {
+            return View();
+        }
+
         [HttpPost]
         public string Authenticate(AuthenticateModel model)
         {
@@ -36,9 +41,11 @@ namespace AuthSystem.Controllers
 
             // User = null when invalid input info is provided
             if (user == null)
-            {
                 return null;
-            }
+
+            if (user.IsActivated == false)
+                return "Not Activated";
+
             return user.Username;
         }
 
@@ -58,6 +65,20 @@ namespace AuthSystem.Controllers
             {
                 Console.WriteLine(ex.Message);
                 return null;
+            }
+        }
+
+        [HttpPost]
+        public async Task<bool> ActivateAccount(string pincode)
+        {
+            try
+            {
+                return await _authService.ActivateAccount(pincode);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
     }

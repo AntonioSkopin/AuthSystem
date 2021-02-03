@@ -30,15 +30,25 @@
             var url = "https://localhost:44306/Auth/Authenticate";
             var usernameInpt = $("#username").val();
             var passwordInpt = $("#password").val();
+            // Post request naar controller
             $.post(url, { username: usernameInpt, password: passwordInpt }, function (data) {
+                // Data == null als onjuiste gegevens worden in gevoerd
+                // Data == Not Activated als het account nog niet is geactiveerd
+                // Data == Gebruikersnaam van user als login succesvol was
                 if (data == null) {
                     $("#loginResult").removeClass("alert alert-success");
                     $("#loginResult").addClass("alert alert-danger");
                     $("#loginResult").html("Onjuiste gegevens! Probeer het opnieuw!");
                 } else {
-                    $("#loginResult").removeClass("alert alert-danger");
-                    $("#loginResult").addClass("alert alert-success");
-                    $("#loginResult").html("Succesvol ingelogd als " + data + "!");
+                    if (data == "Not Activated") {
+                        $("#loginResult").removeClass("alert alert-success");
+                        $("#loginResult").addClass("alert alert-danger");
+                        $("#loginResult").html("Activeer je account eerst voordat je kan inloggen!");
+                    } else {
+                        $("#loginResult").removeClass("alert alert-danger");
+                        $("#loginResult").addClass("alert alert-success");
+                        $("#loginResult").html("Succesvol ingelogd als " + data + "!");
+                    }
                 }
             });
         });
