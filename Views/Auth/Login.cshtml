@@ -24,6 +24,7 @@
     </form>
     <br />
     <div id="loginResult" class=""></div>
+    <div id="token" class=""></div>
 
     <script type="text/jscript">
         $("#login-btn").click(function () {
@@ -40,14 +41,19 @@
                     $("#loginResult").addClass("alert alert-danger");
                     $("#loginResult").html("Onjuiste gegevens! Probeer het opnieuw!");
                 } else {
-                    if (data == "Not Activated") {
+                    if (data.isActivated == false) {
                         $("#loginResult").removeClass("alert alert-success");
                         $("#loginResult").addClass("alert alert-danger");
                         $("#loginResult").html("Activeer je account eerst voordat je kan inloggen!");
                     } else {
+                        console.log(data);
                         $("#loginResult").removeClass("alert alert-danger");
                         $("#loginResult").addClass("alert alert-success");
-                        $("#loginResult").html("Succesvol ingelogd als " + data + "!");
+                        $("#loginResult").html("Succesvol ingelogd als " + data.username + "!");
+                        // Store token in localstorage
+                        localStorage.setItem("JwtToken", data.token);
+                        // Route user to todo items
+                        window.location.replace("https://www.google.com");
                     }
                 }
             });

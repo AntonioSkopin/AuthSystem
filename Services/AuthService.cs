@@ -12,6 +12,7 @@ namespace AuthSystem.Services
 {
     public interface IAuthorizationService
     {
+        Task<User> GetUser(Guid user_gd);
         Task<User> Authenticate(AuthenticateModel authenticateModel);
         Task<User> Register(User user, string password);
         Task<bool> ActivateAccount(string pincode);
@@ -26,6 +27,20 @@ namespace AuthSystem.Services
         {
             _configuration = configuration;
             _context = context;
+        }
+
+        public async Task<User> GetUser(Guid user_gd)
+        {
+            var getUserQuery =
+            @"
+                SELECT * FROM Users
+                WHERE Gd = @_gd
+            ";
+
+            return await GetQuery<User>(getUserQuery, new
+            {
+                _gd = user_gd
+            });
         }
 
         public async Task<User> Authenticate(AuthenticateModel authenticateModel)
