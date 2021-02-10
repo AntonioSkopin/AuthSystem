@@ -154,3 +154,4 @@ C:\Users\askop\OneDrive\Desktop\AuthSystem\obj\Debug\netcoreapp3.1\Razor\Views\A
 C:\Users\askop\OneDrive\Desktop\AuthSystem\obj\Debug\netcoreapp3.1\Razor\Views\Auth\Login.cshtml.g.cs
 C:\Users\askop\OneDrive\Desktop\AuthSystem\obj\Debug\netcoreapp3.1\Razor\Views\Auth\VerifyAccount.cshtml.g.cs
 C:\Users\askop\OneDrive\Desktop\AuthSystem\bin\Debug\netcoreapp3.1\Dapper.dll
+C:\Users\askop\OneDrive\Desktop\AuthSystem\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll

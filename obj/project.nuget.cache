@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "nRnxIwCp9iZKPtOuNtIG09u45AUWD1eJCwqY+mRWVWTi5/SsteKyAwD3SRpt6Y3N/5d9jmZr9Gct8Z8rZxv0RQ==",
+  "dgSpecHash": "EEgKxQ5YACZlN3xi8r3oBYq0XKv7k8vmqikHjLZ3ko6fQKYvjTVfntl0aYB1zmbSxUOE4AhKBTOI7lIEN0g2dA==",
   "success": true,
   "projectFilePath": "C:\\Users\\askop\\OneDrive\\Desktop\\AuthSystem\\AuthSystem.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\askop\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.0\\automapper.extensions.microsoft.dependencyinjection.8.1.0.nupkg.sha512",
     "C:\\Users\\askop\\.nuget\\packages\\dapper\\2.0.78\\dapper.2.0.78.nupkg.sha512",
     "C:\\Users\\askop\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
+    "C:\\Users\\askop\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.12\\microsoft.aspnetcore.authentication.jwtbearer.3.1.12.nupkg.sha512",
     "C:\\Users\\askop\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\askop\\.nuget\\packages\\microsoft.aspnetcore.razor\\2.2.0\\microsoft.aspnetcore.razor.2.2.0.nupkg.sha512",
     "C:\\Users\\askop\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\3.1.0\\microsoft.aspnetcore.razor.language.3.1.0.nupkg.sha512",
